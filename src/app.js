@@ -5,13 +5,30 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 const routes = require("./routes");
+const ApiError = require("./utils/ApiError");
 const { notFound, errorHandler } = require("./middlewares/error.middleware");
 
 const app = express();
+const allowedOrigins = new Set(env.frontendUrls);
+const normalizeOrigin = (origin = "") => origin.replace(/\/+$/, "");
+
+if (env.nodeEnv === "production") {
+  app.set("trust proxy", 1);
+}
 
 app.use(
   cors({
-    origin: env.frontendUrl,
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.has(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(new ApiError(403, "Origin not allowed by CORS"));
+    },
     credentials: true
   })
 );
@@ -37,4 +54,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 module.exports = app;
-

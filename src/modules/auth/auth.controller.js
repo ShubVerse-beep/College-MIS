@@ -5,8 +5,9 @@ const authService = require("./auth.service");
 
 const refreshCookieOptions = {
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: env.cookieSameSite,
   secure: env.cookieSecure,
+  path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
@@ -76,4 +77,3 @@ module.exports = {
   me,
   changePassword
 };
-

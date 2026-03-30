@@ -1,36 +1,39 @@
-# College MIS
+# College MIS Backend
 
-Production-style College Management System with a React frontend and a Node.js/Express backend.
+Express + MongoDB API for the College MIS application.
 
-## Apps
+## Local Setup
 
-- `backend/`: REST API, JWT auth, MongoDB models, notifications, PDF reports.
-- `frontend/`: React + Vite SPA for admin, faculty, and student portals.
+1. Copy `.env.example` to `.env`.
+2. Fill in MongoDB, JWT, and mail settings.
+3. Run `npm install`.
+4. Run `npm run dev`.
 
-## Quick Start
+The API runs on `http://localhost:5000` by default and exposes health checks at `/api/v1/health`.
 
-### Backend
+## Render Deploy
 
-1. Copy `backend/.env.example` to `backend/.env`.
-2. Update MongoDB, JWT, cookie, and SMTP settings.
-3. Install dependencies with `npm install`.
-4. Run the API with `npm run dev`.
+This folder is ready to be used as its own repo on Render.
 
-### Frontend
+1. Push this `backend/` folder as the root of your backend repo.
+2. Create a Render Web Service from that repo, or use the included `render.yaml`.
+3. Use:
+   - Build command: `npm install`
+   - Start command: `npm start`
+   - Health check path: `/api/v1/health`
+4. Add these environment variables in Render:
+   - `NODE_ENV=production`
+   - `MONGODB_URI=...`
+   - `JWT_ACCESS_SECRET=...`
+   - `JWT_REFRESH_SECRET=...`
+   - `FRONTEND_URL=https://your-frontend.vercel.app`
+   - `COOKIE_SECURE=true`
+   - `COOKIE_SAME_SITE=none`
 
-1. Copy `frontend/.env.example` to `frontend/.env`.
-2. Install dependencies with `npm install`.
-3. Run the app with `npm run dev`.
+`FRONTEND_URLS` is optional and lets you add extra comma-separated origins if you also want preview deployments to work.
 
-## Default Ports
+## Frontend Pairing
 
-- Frontend: `5173`
-- Backend: `5000`
+When your Vercel frontend is live, update `FRONTEND_URL` to that exact Vercel URL. Because auth uses cookies across different domains, production should keep `COOKIE_SECURE=true` and `COOKIE_SAME_SITE=none`.
 
-## Bootstrap Flow
-
-1. Open the frontend.
-2. Use the setup page to create the first admin account.
-3. Log in as admin and create faculty, students, and courses.
-4. Publish the timetable, post attendance, upload marks, and send announcements.
-
+If a browser blocks third-party cookies aggressively, cross-site login refresh can still be affected. The most reliable long-term setup is using the same site with custom subdomains, but Render + Vercel will now work with the correct cookie settings.
